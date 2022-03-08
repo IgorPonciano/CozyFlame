@@ -10,9 +10,17 @@ public class MovingCube : MonoBehaviour
     private MeshRenderer _meshRend;
     private void Start()
     {
-        transform.DOMove(new Vector3(10, 0, 0), _cycleLenght).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
-        transform.DOShakeScale(_cycleLenght, _shakePower, 10, 60, true).SetLoops(-1, LoopType.Restart);
+        Sequence _sequence = DOTween.Sequence();
         _meshRend = gameObject.GetComponent<MeshRenderer>();
-        _meshRend.material.DOColor(Color.red, _cycleLenght).SetLoops(-1, LoopType.Yoyo);
+        _sequence.Append(transform.DOMove(new Vector3(10, 0, 0), _cycleLenght).SetEase(Ease.InOutSine)).Join(transform.DOShakeScale(_cycleLenght, _shakePower, 10, 60, true).SetLoops(-1, LoopType.Restart));
+
+        _sequence.OnComplete(() =>
+      {
+          _meshRend.material.DOColor(Color.red, _cycleLenght).SetLoops(-1, LoopType.Yoyo);
+      });
+
+        //
+        //
+        transform.DORotate(new Vector3(0, 360, 0), _cycleLenght, RotateMode.FastBeyond360).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Restart);
     }
 }
